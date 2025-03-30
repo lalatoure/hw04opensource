@@ -1,0 +1,109 @@
+def finsert(student_id, name, c_score, english, python):
+    student_id.append(int(input("student number: ")))
+    name.append(input("name: "))
+    c_score.append(int(input("c score: ")))
+    english.append(int(input("english score: ")))
+    python.append(int(input("python score: ")))
+
+def fdelete(i, student_id, name, c_score, english, python):
+    del student_id[i]
+    del name[i]
+    del c_score[i]
+    del english[i]
+    del python[i]
+
+def ffind(i, student_id, name):
+    print(student_id[i])
+    print(name[i], i)
+
+def fcount(i, sums):
+    return 1 if sums[i] > 240 else 0
+
+def fname(i, array=None):
+    if array is None:
+        array = []
+    print(array[i], end="      ")
+
+def fsum(a, b, c):
+    return a + b + c
+
+def favg(x):
+    return round(x / 3, 1)
+
+def fgrade(x):
+    if x >= 95:
+        print('A+', end="     ")
+    elif x >= 90:
+        print('A', end="      ")
+    elif x >= 85:
+        print('B+', end="     ")
+    elif x >= 80:
+        print('B', end="      ")
+    elif x >= 75:
+        print('C+', end="     ")
+    elif x >= 70:
+        print("C", end="      ")
+    elif x >= 60:
+        print("D", end="      ")
+    else:
+        print("F", end="      ")
+
+def frank(k):
+    print(k)
+
+def main():
+    student_id = [0] * 10
+    name = [""] * 10
+    englishscore = [0] * 10
+    c_score = [0] * 10
+    python_score = [0] * 10
+    sums = [0] * 10
+    ranks = [0] * 10
+
+    for i in range(5):
+        student_id[i] = int(input("please student number: "))
+        name[i] = input("please name: ")
+        englishscore[i] = int(input("please english score: "))
+        c_score[i] = int(input("please c score: "))
+        python_score[i] = int(input("please python score: "))
+
+    for i in range(5):
+        sums[i] = c_score[i] + python_score[i] + englishscore[i]
+
+    sorted_sums = sorted(sums[:5], reverse=True)
+    for i in range(5):
+        ranks[i] = sorted_sums.index(sums[i]) + 1
+
+    print("          program of manage grade           ")
+    print("=" * 87)
+    print("student number       name     english   c_language   python   sum    avg   grade    rank")
+    print("=" * 87)
+
+    for i in range(5):
+        print(student_id[i], end="        ")
+        fname(i, name)
+        print(f"{englishscore[i]}      {c_score[i]}      {python_score[i]}", end="        ")
+        x = fsum(englishscore[i], c_score[i], python_score[i])
+        print(x, end="      ")
+        y = favg(x)
+        print(y, end="       ")
+        fgrade(y)
+        frank(ranks[i])
+
+    a = int(input("how many add list: "))
+    for _ in range(a):
+        finsert(student_id, name, c_score, englishscore, python_score)
+
+    b = int(input("how many remove list: "))
+    for _ in range(b):
+        idx = int(input("enter index to delete: "))
+        fdelete(idx, student_id, name, c_score, englishscore, python_score)
+
+    c = int(input("which find list: "))
+    ffind(c, student_id, name)
+
+    count = 0
+    for i in range(len(student_id)):
+        count += fcount(i, sums)
+
+main()
