@@ -1,0 +1,144 @@
+##############################
+# 프로그램명: StudentGradeManager
+# 작성자: 컴퓨터공학과/홍길동
+# 작성일: 2025-04-15
+# 프로그램 설명:
+#   5명의 학생에 대해 학번, 이름, 영어, C-언어, 파이썬 점수를 입력받아
+#   총점, 평균, 학점, 등수를 계산하고 다양한 기능(삽입, 삭제, 탐색, 정렬, 카운트)을 수행
+##############################
+
+# 학생 정보를 저장하고 점수를 계산하는 클래스
+class Student:
+    def __init__(self, student_id, name, eng, c_lang, python):
+        # 학생 기본 정보 초기화
+        self.student_id = student_id
+        self.name = name
+        self.eng = eng
+        self.c_lang = c_lang
+        self.python = python
+        
+        # 계산된 정보 초기화
+        self.total = 0
+        self.average = 0.0
+        self.grade = ''
+        self.rank = 0
+
+        # 총점과 평균, 학점 계산
+        self.calculate_total_average()
+        self.calculate_grade()
+
+    def calculate_total_average(self):
+        # 총점과 평균 계산
+        self.total = self.eng + self.c_lang + self.python
+        self.average = self.total / 3
+
+    def calculate_grade(self):
+        # 평균에 따른 학점 부여
+        avg = self.average
+        if avg >= 90:
+            self.grade = 'A'
+        elif avg >= 80:
+            self.grade = 'B'
+        elif avg >= 70:
+            self.grade = 'C'
+        elif avg >= 60:
+            self.grade = 'D'
+        else:
+            self.grade = 'F'
+
+    def __str__(self):
+        # 학생 정보를 문자열로 반환 (출력용)
+        return f"{self.student_id}\t{self.name}\t{self.eng}\t{self.c_lang}\t{self.python}\t{self.total}\t{self.average:.2f}\t{self.grade}\t{self.rank}"
+
+# 학생 목록을 관리하고 기능을 제공하는 관리자 클래스
+class GradeManager:
+    def __init__(self):
+        # 학생 객체들을 저장할 리스트
+        self.students = []
+
+    def input_students(self):
+        # 5명의 학생 정보를 키보드로 입력받음
+        for _ in range(5):
+            student_id = input("학번: ")
+            name = input("이름: ")
+            eng = int(input("영어 점수: "))
+            c_lang = int(input("C언어 점수: "))
+            python = int(input("파이썬 점수: "))
+            self.insert_student(student_id, name, eng, c_lang, python)
+
+    def insert_student(self, student_id, name, eng, c_lang, python):
+        # 학생 객체 생성 후 리스트에 추가하고 등수 재계산
+        student = Student(student_id, name, eng, c_lang, python)
+        self.students.append(student)
+        self.calculate_ranks()
+
+    def delete_student(self, student_id):
+        # 주어진 학번의 학생 삭제 후 등수 재계산
+        self.students = [s for s in self.students if s.student_id != student_id]
+        self.calculate_ranks()
+
+    def search_by_id(self, student_id):
+        # 학번으로 학생 탐색 (없으면 None)
+        return next((s for s in self.students if s.student_id == student_id), None)
+
+    def search_by_name(self, name):
+        # 이름으로 학생 리스트 탐색 (동명이인 가능)
+        return [s for s in self.students if s.name == name]
+
+    def sort_by_total(self):
+        # 총점 기준으로 학생 정렬 후 등수 재계산
+        self.students.sort(key=lambda s: s.total, reverse=True)
+        self.calculate_ranks()
+
+    def calculate_ranks(self):
+        # 총점 기준 등수 계산
+        self.students.sort(key=lambda s: s.total, reverse=True)
+        for i, student in enumerate(self.students):
+            student.rank = i + 1
+
+    def count_above_80(self):
+        # 평균 점수가 80 이상인 학생 수 카운트
+        return len([s for s in self.students if s.average >= 80])
+
+    def print_all(self):
+        # 전체 학생 정보 출력
+        print("학번\t이름\t영어\tC언어\t파이썬\t총점\t평균\t학점\t등수")
+        for student in self.students:
+            print(student)
+
+# 메인 실행부
+if __name__ == "__main__":
+    # GradeManager 인스턴스 생성
+    manager = GradeManager()
+    
+    # 학생 정보 입력
+    manager.input_students()
+    
+    # 전체 학생 정보 출력
+    manager.print_all()
+
+    # 총점 기준 정렬 후 출력
+    print("\n총점으로 정렬 후 출력:")
+    manager.sort_by_total()
+    manager.print_all()
+
+    # 80점 이상 학생 수 출력
+    print("\n80점 이상 학생 수:", manager.count_above_80())
+
+    # 학번으로 검색
+    search_id = input("\n검색할 학번: ")
+    found = manager.search_by_id(search_id)
+    if found:
+        print("검색 결과:", found)
+    else:
+        print("해당 학번의 학생 없음")
+
+    # 이름으로 검색
+    search_name = input("\n검색할 이름: ")
+    results = manager.search_by_name(search_name)
+    if results:
+        print("검색 결과:")
+        for s in results:
+            print(s)
+    else:
+        print("해당 이름의 학생 없음")
